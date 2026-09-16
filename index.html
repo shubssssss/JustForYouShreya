@@ -273,6 +273,12 @@ body::before{
 .nav-links{ display:flex; list-style:none; gap:30px; }
 .nav-links a{ color:var(--muted); text-decoration:none; font-family:'Playfair Display'; font-style:italic; font-size:14px; transition:.2s; }
 .nav-links a:hover{ color:white; }
+.nav-links button.nav-game-link{
+    background:none; border:none; cursor:pointer;
+    color:var(--muted); text-decoration:none; font-family:'Playfair Display'; font-style:italic; font-size:14px; transition:.2s;
+    padding:0;
+}
+.nav-links button.nav-game-link:hover{ color:white; }
 
 .nav-right{ display:flex; gap:10px; }
 .nav-heart{ width:35px; height:35px; border-radius:50%; border:none; background:rgba(255,255,255,.05); color:white; cursor:pointer; }
@@ -491,6 +497,151 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
     .reveal-frame{ width:210px; }
 }
 
+/* ---------- Tic Tac Toe ---------- */
+
+.game-fab{
+    position:fixed;
+    left:24px;
+    bottom:24px;
+    z-index:1200;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 20px 12px 16px;
+    border-radius:999px;
+    border:1px solid rgba(243,202,142,.28);
+    background:rgba(44,19,28,.88);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    backdrop-filter:blur(8px);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.4px;
+    transition:.25s;
+}
+.game-fab span.game-fab-icon{ font-size:18px; }
+.game-fab:hover{ transform:translateY(-3px); background:var(--red); border-color:var(--red); box-shadow:0 14px 34px rgba(201,80,111,.4); }
+
+.game-modal{
+    position:fixed; inset:0; z-index:6500;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; background:rgba(6,6,8,.88); backdrop-filter:blur(10px);
+    opacity:0; visibility:hidden; transition:opacity .35s ease, visibility .35s ease;
+}
+.game-modal.open{ opacity:1; visibility:visible; }
+
+.game-modal-inner{
+    width:min(480px,100%);
+    max-height:92vh;
+    overflow-y:auto;
+    background:
+        radial-gradient(circle at 20% 10%,rgba(243,202,142,.10),transparent 45%),
+        linear-gradient(160deg,#1f1017,#140b10);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:30px;
+    box-shadow:var(--shadow);
+    transform:translateY(24px) scale(.98);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+}
+.game-modal.open .game-modal-inner{ transform:translateY(0) scale(1); }
+
+.game-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.game-eyebrow{ color:var(--gold); font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:8px; }
+.game-head h2{ font-family:'Playfair Display'; font-size:clamp(24px,4vw,32px); font-weight:500; }
+
+.game-mode-select{ display:flex; flex-direction:column; gap:14px; margin:10px 0 6px; }
+.game-mode-btn{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 18px; border-radius:16px;
+    border:1px solid var(--line);
+    background:linear-gradient(145deg,#241319,#180d12);
+    color:#fff; cursor:pointer; text-align:left;
+    font-family:'Inter',sans-serif; transition:.25s;
+}
+.game-mode-btn:hover{ border-color:rgba(201,80,111,.55); transform:translateY(-2px); background:linear-gradient(145deg,#2c1620,#1c0f15); }
+.game-mode-icon{ font-size:26px; flex-shrink:0; }
+.game-mode-btn strong{ display:block; font-family:'Playfair Display'; font-size:16px; font-weight:600; }
+.game-mode-btn small{ display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+
+.game-status-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:4px 0 18px;
+    font-family:'Playfair Display'; font-style:italic; font-size:15px; color:var(--muted);
+}
+.game-status-bar strong{ color:var(--gold); font-style:normal; font-family:'Inter',sans-serif; }
+
+.score-row{ display:flex; gap:10px; margin-bottom:18px; }
+.score-chip{
+    flex:1; text-align:center; padding:10px 6px; border-radius:12px;
+    border:1px solid var(--line); background:rgba(255,255,255,.03);
+}
+.score-chip .score-label{ display:block; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+.score-chip .score-value{ font-family:'Playfair Display'; font-size:20px; font-weight:600; color:var(--white); }
+.score-chip.chip-x .score-value{ color:var(--red2); }
+.score-chip.chip-o .score-value{ color:var(--gold); }
+
+.ttt-board{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    aspect-ratio:1/1;
+    margin:0 auto 18px;
+}
+.ttt-cell{
+    background:linear-gradient(160deg,#2a1420,#1a0d13);
+    border:1px solid var(--line);
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display'; font-weight:700;
+    font-size:clamp(28px,7vw,42px);
+    cursor:pointer;
+    color:var(--white);
+    transition:.2s;
+    user-select:none;
+}
+.ttt-cell:hover:not(.filled){ background:linear-gradient(160deg,#33182a,#221017); border-color:rgba(243,202,142,.4); }
+.ttt-cell.filled{ cursor:default; }
+.ttt-cell.x-mark{ color:var(--red2); }
+.ttt-cell.o-mark{ color:var(--gold); }
+.ttt-cell.win-cell{ animation:winPulse .9s ease infinite; border-color:var(--gold); }
+
+@keyframes winPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(243,202,142,.5); }
+    50%{ box-shadow:0 0 0 8px rgba(243,202,142,0); }
+}
+
+.game-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.game-btn{
+    flex:1;
+    padding:12px 18px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.06);
+    color:#fff;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+    transition:.25s;
+    white-space:nowrap;
+}
+.game-btn:hover{ background:rgba(255,255,255,.14); }
+.game-btn.primary{ background:linear-gradient(120deg,var(--gold),var(--red2)); color:#2a0e16; border:none; }
+.game-btn.primary:hover{ transform:translateY(-2px); box-shadow:0 10px 22px rgba(201,80,111,.35); }
+
+.game-close{
+    flex-shrink:0; width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+    background:rgba(255,255,255,.04); color:#fff; font-size:15px; cursor:pointer; transition:.25s;
+}
+.game-close:hover{ background:var(--red); border-color:var(--red); transform:rotate(90deg); }
+
+@media(max-width:560px){
+    .game-fab{ left:16px; bottom:16px; padding:11px 16px 11px 14px; font-size:12px; }
+    .game-modal-inner{ padding:22px; border-radius:20px; }
+}
+
 </style>
 </head>
 
@@ -516,10 +667,6 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
 
         <div class="reveal-frame">
             <div class="reveal-text">
-                <!-- for the girl who<br>
-                made an ordinary day<br>
-                feel like a favourite one ✦ -->
-
                 a small secret, just for Shreya
             </div>
         </div>
@@ -537,7 +684,6 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
 </div>
 
 
-<!-- Private note: opens automatically whenever the page is opened -->
 <div class="note-modal" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
     <div class="note-modal-inner">
         <div class="note-head">
@@ -548,7 +694,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
             <button class="note-close" aria-label="Close note" onclick="closeNote()">✕</button>
         </div>
 
-        <div class="note-content">
+        < class="note-content">
             <p><strong>Shreya,</strong></p>
 
             <p><strong>I don't know how to start this. I'm not someone who writes stuff like this, so bear with me.</strong></p>
@@ -578,6 +724,10 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
 
 <button class="note-open-btn" id="noteOpenBtn" aria-label="Open note" title="Open note" onclick="openNote()">💌</button>
 
+<button class="game-fab" id="gameFab" aria-haspopup="dialog" aria-controls="gameModal" onclick="openGameModal()">
+    <span class="game-fab-icon">🎮</span> Play a game
+</button>
+
 
 <nav class="nav" id="nav">
 
@@ -591,6 +741,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         <li><a href="#shayari">Shayari</a></li>
         <li><a href="#little">Little Things</a></li>
         <li><a href="#final">For Shreya</a></li>
+        <li><button class="nav-game-link" onclick="openGameModal()">Play</button></li>
     </ul>
 
     <div class="nav-right">
@@ -779,7 +930,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">Because sometimes normal words aren't enough.</p>
 
         <div class="shayari">
-            <div class="quote-mark">“</div>
+            <div class="quote-mark">"</div>
             <p>
                 Teri muskurahat mein kuch toh baat hai,
                 <br>jo dil ko har baar naya sa ehsaas hai.
@@ -795,7 +946,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         </div>
 
         <div class="shayari">
-            <div class="quote-mark">“</div>
+            <div class="quote-mark">"</div>
             <p>
                 Tasveer banaun toh tera chehra ban jaaye,
                 <br>geet likhun toh tera naam aa jaaye.
@@ -808,7 +959,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         </div>
 
         <div class="shayari">
-            <div class="quote-mark">“</div>
+            <div class="quote-mark">"</div>
             <p>
                 Chaand bhi sharma jaaye,
                 <br>jab tum saamne aa jao.
@@ -906,6 +1057,72 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
 <footer>
     Made with ❤️, a little creativity &amp; probably too much thinking.
 </footer>
+
+
+<!-- Tic Tac Toe modal -->
+<div class="game-modal" id="gameModal" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle">
+    <div class="game-modal-inner">
+
+        <div class="game-head">
+            <div>
+                <div class="game-eyebrow">a little game</div>
+                <h2 id="gameModalTitle">Tic Tac Toe</h2>
+            </div>
+            <button class="game-close" aria-label="Close game" onclick="closeGameModal()">✕</button>
+        </div>
+
+        <!-- Mode select screen -->
+        <div id="gameModeSelect" class="game-mode-select">
+            <button class="game-mode-btn" onclick="startGame('bot')">
+                <span class="game-mode-icon">🤖</span>
+                <span>
+                    <strong>Play vs Bot</strong>
+                    <small>You're X, the bot plays O</small>
+                </span>
+            </button>
+            <button class="game-mode-btn" onclick="startGame('friend')">
+                <span class="game-mode-icon">🧑‍🤝‍🧑</span>
+                <span>
+                    <strong>Play with a Friend</strong>
+                    <small>Two players, same device — take turns</small>
+                </span>
+            </button>
+        </div>
+
+        <!-- Game board screen -->
+        <div id="gamePlayArea" style="display:none;">
+
+            <div class="score-row">
+                <div class="score-chip chip-x">
+                    <span class="score-label" id="scoreLabelX">X</span>
+                    <span class="score-value" id="scoreX">0</span>
+                </div>
+                <div class="score-chip">
+                    <span class="score-label">Draws</span>
+                    <span class="score-value" id="scoreDraw">0</span>
+                </div>
+                <div class="score-chip chip-o">
+                    <span class="score-label" id="scoreLabelO">O</span>
+                    <span class="score-value" id="scoreO">0</span>
+                </div>
+            </div>
+
+            <div class="game-status-bar">
+                <span id="gameStatusText">X's turn</span>
+                <strong id="gameModeLabel"></strong>
+            </div>
+
+            <div class="ttt-board" id="tttBoard"></div>
+
+            <div class="game-actions">
+                <button class="game-btn" onclick="showModeSelect()">⟵ Change mode</button>
+                <button class="game-btn primary" onclick="resetBoard()">New round</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 
 
 <script>
@@ -1028,6 +1245,216 @@ setInterval(()=>{
     if(Math.random()>.65){ createHeart(); }
 },2500);
 
+
+/* ---------------- Tic Tac Toe ---------------- */
+
+const gameModal = document.getElementById("gameModal");
+const gameModeSelect = document.getElementById("gameModeSelect");
+const gamePlayArea = document.getElementById("gamePlayArea");
+const tttBoard = document.getElementById("tttBoard");
+const gameStatusText = document.getElementById("gameStatusText");
+const gameModeLabel = document.getElementById("gameModeLabel");
+const scoreXEl = document.getElementById("scoreX");
+const scoreOEl = document.getElementById("scoreO");
+const scoreDrawEl = document.getElementById("scoreDraw");
+const scoreLabelX = document.getElementById("scoreLabelX");
+const scoreLabelO = document.getElementById("scoreLabelO");
+
+let lastFocusedBeforeGame = null;
+let gameMode = null;        // 'bot' | 'friend'
+let board = Array(8+1).fill(null); // 9 cells, index 0-8
+let currentPlayer = 'X';
+let gameOver = false;
+let scores = { X:0, O:0, draw:0 };
+
+const WIN_LINES = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
+
+function openGameModal(){
+    lastFocusedBeforeGame = document.activeElement;
+    gameModal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    showModeSelect();
+    setTimeout(()=>{
+        const closeBtn = gameModal.querySelector(".game-close");
+        if(closeBtn){ closeBtn.focus(); }
+    },50);
+}
+
+function closeGameModal(){
+    gameModal.classList.remove("open");
+    document.body.style.overflow = intro.classList.contains("hide") ? "auto" : "hidden";
+    if(lastFocusedBeforeGame){ lastFocusedBeforeGame.focus(); }
+}
+
+gameModal.addEventListener("click",(e)=>{
+    if(e.target === gameModal){ closeGameModal(); }
+});
+
+function showModeSelect(){
+    gameModeSelect.style.display = "flex";
+    gamePlayArea.style.display = "none";
+}
+
+function startGame(mode){
+    gameMode = mode;
+    scores = { X:0, O:0, draw:0 };
+    updateScoreLabels();
+    gameModeLabel.textContent = mode === 'bot' ? "vs Bot" : "vs Friend";
+    gameModeSelect.style.display = "none";
+    gamePlayArea.style.display = "block";
+    resetBoard();
+}
+
+function updateScoreLabels(){
+    scoreLabelX.textContent = "X (You)".length && gameMode === 'bot' ? "X (You)" : "X";
+    scoreLabelO.textContent = gameMode === 'bot' ? "O (Bot)" : "O";
+    scoreXEl.textContent = scores.X;
+    scoreOEl.textContent = scores.O;
+    scoreDrawEl.textContent = scores.draw;
+}
+
+function resetBoard(){
+    board = Array(9).fill(null);
+    currentPlayer = 'X';
+    gameOver = false;
+    renderBoard();
+    updateStatus();
+}
+
+function renderBoard(){
+    tttBoard.innerHTML = "";
+    board.forEach((val, i)=>{
+        const cell = document.createElement("div");
+        cell.className = "ttt-cell" + (val ? " filled " + (val === 'X' ? "x-mark" : "o-mark") : "");
+        cell.textContent = val || "";
+        cell.dataset.index = i;
+        cell.addEventListener("click", ()=> handleCellClick(i));
+        tttBoard.appendChild(cell);
+    });
+}
+
+function updateStatus(winner){
+    if(winner === 'draw'){
+        gameStatusText.textContent = "It's a draw!";
+    } else if(winner){
+        const who = gameMode === 'bot' && winner === 'O' ? "Bot wins" : (winner + " wins!");
+        gameStatusText.textContent = who;
+    } else {
+        const whoTurn = gameMode === 'bot' && currentPlayer === 'O' ? "Bot is thinking…" : currentPlayer + "'s turn";
+        gameStatusText.textContent = whoTurn;
+    }
+}
+
+function handleCellClick(i){
+    if(gameOver || board[i]) return;
+    if(gameMode === 'bot' && currentPlayer === 'O') return; // block clicks during bot turn
+
+    placeMark(i, currentPlayer);
+
+    const result = checkWinner();
+    if(result){
+        finishRound(result);
+        return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    updateStatus();
+
+    if(gameMode === 'bot' && currentPlayer === 'O' && !gameOver){
+        setTimeout(botMove, 450);
+    }
+}
+
+function placeMark(i, mark){
+    board[i] = mark;
+    renderBoard();
+}
+
+function botMove(){
+    if(gameOver) return;
+    const move = getBestMove();
+    if(move === -1) return;
+    placeMark(move, 'O');
+
+    const result = checkWinner();
+    if(result){
+        finishRound(result);
+        return;
+    }
+
+    currentPlayer = 'X';
+    updateStatus();
+}
+
+function getBestMove(){
+    // Try to win
+    let move = findWinningMove('O');
+    if(move !== -1) return move;
+    // Block player win
+    move = findWinningMove('X');
+    if(move !== -1) return move;
+    // Take center
+    if(!board[4]) return 4;
+    // Take a corner
+    const corners = [0,2,6,8].filter(i => !board[i]);
+    if(corners.length) return corners[Math.floor(Math.random()*corners.length)];
+    // Take any remaining side
+    const sides = [1,3,5,7].filter(i => !board[i]);
+    if(sides.length) return sides[Math.floor(Math.random()*sides.length)];
+    return -1;
+}
+
+function findWinningMove(mark){
+    for(const line of WIN_LINES){
+        const vals = line.map(i => board[i]);
+        const countMark = vals.filter(v => v === mark).length;
+        const countEmpty = vals.filter(v => !v).length;
+        if(countMark === 2 && countEmpty === 1){
+            const emptyIndex = line[vals.findIndex(v => !v)];
+            return emptyIndex;
+        }
+    }
+    return -1;
+}
+
+function checkWinner(){
+    for(const line of WIN_LINES){
+        const [a,b,c] = line;
+        if(board[a] && board[a] === board[b] && board[b] === board[c]){
+            return { winner: board[a], line };
+        }
+    }
+    if(board.every(v => v)){
+        return { winner: 'draw', line: [] };
+    }
+    return null;
+}
+
+function finishRound(result){
+    gameOver = true;
+    if(result.winner === 'draw'){
+        scores.draw++;
+        updateStatus('draw');
+    } else {
+        scores[result.winner]++;
+        updateStatus(result.winner);
+        highlightWin(result.line);
+        createHeartBurst();
+    }
+    updateScoreLabels();
+}
+
+function highlightWin(line){
+    line.forEach(i=>{
+        const cell = tttBoard.children[i];
+        if(cell){ cell.classList.add("win-cell"); }
+    });
+}
+
 document.addEventListener("keydown",(e)=>{
     if(e.key === "Escape"){
         if(noteModal.classList.contains("open")){
@@ -1036,6 +1463,8 @@ document.addEventListener("keydown",(e)=>{
             closeVoiceModal();
         }else if(danceModal.classList.contains("open")){
             closeDanceModal();
+        }else if(gameModal.classList.contains("open")){
+            closeGameModal();
         }else{
             intro.classList.remove("hide");
             revealScene.classList.remove("open");
