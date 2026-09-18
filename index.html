@@ -75,60 +75,56 @@ body::before{
 
 .reveal-scene{ position:relative; z-index:2; text-align:center; cursor:pointer; padding:0 16px; }
 
-.reveal-frame{
+/* ---------- Envelope Unseal (intro) ---------- */
+.env-wrap{
     position:relative;
-    width:260px;
+    width:220px;
     max-width:72vw;
+    height:150px;
     margin:0 auto;
-    padding:14px 14px 40px;
-    background:#fff9f2;
-    border-radius:6px;
     animation:revealFloat 4.5s ease-in-out infinite;
-    transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .6s ease;
 }
-
-.reveal-frame::before{
-    content:"";
-    position:absolute;
-    inset:-3px;
-    z-index:-1;
-    border-radius:9px;
-    background:linear-gradient(120deg,var(--gold),var(--red2),var(--gold));
-    background-size:220% 220%;
-    filter:blur(14px);
-    opacity:.65;
-    animation:glowShift 5s ease infinite;
-}
-
-.reveal-frame img{
-    display:block;
-    width:100%;
-    aspect-ratio:4/5;
-    object-fit:cover;
-    object-position:75% 25%;
-    border-radius:3px;
+.env-body{
+    position:absolute; inset:0;
+    background:linear-gradient(160deg,#fdf1ea,#f4e0d3);
+    border-radius:6px;
     box-shadow:0 20px 45px rgba(15,3,9,.5);
 }
-
-.reveal-text{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:100%;
-    aspect-ratio:4/5;
-    padding:24px;
-    background:
-        radial-gradient(circle at 30% 20%,rgba(201,80,111,.10),transparent 55%),
-        linear-gradient(160deg,#fffdf9,#fdf1ea);
-    border-radius:3px;
-    box-shadow:0 20px 45px rgba(15,3,9,.5);
-    font-family:var(--script);
-    font-weight:600;
-    font-size:22px;
-    line-height:1.5;
-    color:var(--red);
-    text-align:center;
+.env-flap{
+    position:absolute; top:0; left:0; width:100%; height:80px;
+    background:linear-gradient(160deg,#f6d9c9,#eec2ac);
+    clip-path:polygon(0 0,100% 0,50% 90%);
+    transform-origin:top center;
+    transition:transform 1s cubic-bezier(.4,.2,.2,1);
+    border-radius:6px 6px 0 0;
+    z-index:3;
 }
+.env-seal{
+    position:absolute; top:56px; left:50%; transform:translateX(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#e0708a,var(--red));
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; z-index:5;
+    box-shadow:0 6px 14px rgba(0,0,0,.4);
+    transition:transform .4s ease, opacity .4s ease;
+    color:#fff;
+}
+.env-letter{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%) translateY(0);
+    width:170px; height:110px;
+    background:#fffdf9;
+    border-radius:4px;
+    box-shadow:0 10px 20px rgba(0,0,0,.35);
+    z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--script); font-weight:600; font-size:15px; color:var(--red);
+    text-align:center; padding:14px; line-height:1.5;
+    transition:transform 1s cubic-bezier(.2,.8,.2,1) .3s;
+}
+.env-wrap.open{ animation:none; }
+.env-wrap.open .env-flap{ transform:rotateX(150deg); }
+.env-wrap.open .env-seal{ opacity:0; transform:translateX(-50%) scale(.4); }
+.env-wrap.open .env-letter{ transform:translateX(-50%) translateY(-70px); }
 
 .reveal-caption{
     margin-top:16px;
@@ -153,7 +149,7 @@ body::before{
     animation:shimmerText 2.6s linear infinite;
 }
 
-.reveal-scene.open .reveal-frame{ transform:scale(1.12); opacity:0; }
+.reveal-scene.open .env-wrap,
 .reveal-scene.open .reveal-caption,
 .reveal-scene.open .reveal-hint{ opacity:0; transition:opacity .4s ease; }
 
@@ -597,7 +593,8 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
 
 @media(max-width:500px){
     .talent-grid{ grid-template-columns:1fr; }
-    .reveal-frame{ width:210px; }
+    .env-wrap{ width:190px; height:130px; }
+    .env-letter{ width:145px; height:95px; font-size:13px; }
     .section{ padding:60px 16px; }
     .hero{ padding:100px 16px 50px; }
 }
@@ -798,10 +795,11 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         onclick="startOpen()"
         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startOpen();}">
 
-        <div class="reveal-frame">
-            <div class="reveal-text">
-                a small secret, just for Shreya
-            </div>
+        <div class="env-wrap" id="envelope">
+            <div class="env-letter"><br></div>
+            <div class="env-body"></div>
+            <div class="env-flap"></div>
+            <div class="env-seal">✦</div>
         </div>
 
         <div class="reveal-caption">
@@ -851,7 +849,6 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
             <p>You'll probably think I'm an idiot for going this far when I could've just said it in a few lines. But saying stuff out loud has never worked for me. So this is what I could do instead.</p>
 
             <p>Hope you like it. And don't worry, I'm not telling anyone about this. This link is only between you and me. Whenever I think of you I'll probably come back and add more to it.</p>
-        
         </div>
     </div>
 </div>
@@ -873,7 +870,7 @@ footer{ padding:35px; text-align:center; border-top:1px solid var(--line); color
         <li><a href="#shayari">Shayari</a></li>
         <li><a href="#little">Little Things</a></li>
         <li><a href="#final">For Shreya</a></li>
-        <li><button class="nav-game-link" onclick="openGameModal()">Play</button></li>
+        <li><button class="nav-game-link" onclick="openGameModal()">Game</button></li>
     </ul>
 
     <div class="nav-right">
@@ -1318,8 +1315,12 @@ const revealScene = document.getElementById("revealScene");
 
 function startOpen(){
     if(revealScene.classList.contains("open")){ return; }
-    revealScene.classList.add("open");
-    setTimeout(openWebsite, 700);
+    const envelope = document.getElementById("envelope");
+    envelope.classList.add("open");
+    setTimeout(()=>{
+        revealScene.classList.add("open");
+        setTimeout(openWebsite, 700);
+    }, 1300);
 }
 
 function openWebsite(){
